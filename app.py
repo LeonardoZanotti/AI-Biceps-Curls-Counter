@@ -3,6 +3,7 @@ import os
 import PIL.Image, PIL.ImageTk
 import cv2 as cv
 import camera
+import model
 
 class App:
 
@@ -14,7 +15,7 @@ class App:
         self.btn_train = None
         self.btn_reset = None
         self.counter_label = None
-        self.model = None
+        self.model = model.Model()
 
         self.window = tk.Tk()
         self.window.title = "Biceps Curl Counter"
@@ -62,10 +63,32 @@ class App:
         self.counter_label.pack(anchor=tk.CENTER, expand=True)
 
     def update(self):
-        pass
+        if self.counting_enabled:
+            self.predict()
+
+        if self.extended and self.contracted:
+            self.extended, self.contracted = False
+            self.rep_counter += 1
+
+        self.counter_label.config(text=f"{self.rep_counter}")
+
+        ret, frame = self.camera.get_frame()
+        if ret:
+            self.photo = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(frame))
+            self.canvas.create_image(0, 0, image=self.photo, anchor=tk.NW)
+
+        self.window.after(self.delay, self.update())
 
     def predict(self):
-        pass
+        frame = self.camera.get_frame()
+        prediction = self.model.predict(frame)
+        if prediction != self.last_prediction:
+            if prediction == 1:
+                self.extended = True
+                self.last_prediction = 1
+            if prediction == 2:
+                self.contracted = True
+                self.last_prediction = 2
 
     def counting_toggle(self):
         self.counting_enabled = not self.counting_enabled
