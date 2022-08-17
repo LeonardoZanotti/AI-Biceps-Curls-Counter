@@ -71,7 +71,20 @@ class App:
         self.counting_enabled = not self.counting_enabled
 
     def save_for_class(self, class_number: int):
-        pass
+        ret, frame = self.camera.get_frame()
+
+        if not os.path.exists("1"):
+            os.mkdir("1")
+        if not os.path.exists("2"):
+            os.mkdir("2")
+
+        img_path = f"{class_number}/frame{self.counters[class_number - 1]}.jpg"
+        cv.imwrite(img_path, cv.cvtColor(frame, cv.COLOR_RGB2GRAY))
+        img = PIL.Image.open(img_path)
+        img.thumbnail((150, 150), PIL.Image.ANTIALIAS)
+        img.save(img_path)
+
+        self.counters[class_number - 1] += 1
 
     def reset(self):
         self.rep_counter = 0
