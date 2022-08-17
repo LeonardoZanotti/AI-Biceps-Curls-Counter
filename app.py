@@ -5,6 +5,7 @@ import cv2 as cv
 import camera
 import model
 
+
 class App:
 
     def __init__(self):
@@ -15,7 +16,10 @@ class App:
         self.btn_train = None
         self.btn_reset = None
         self.counter_label = None
+        self.photo = None
         self.model = model.Model()
+
+        self.camera = camera.Camera()
 
         self.window = tk.Tk()
         self.window.title = "Biceps Curl Counter"
@@ -29,8 +33,6 @@ class App:
 
         self.counting_enabled = False
 
-        self.camera = camera.Camera()
-
         self.init_gui()
 
         self.delay = 15
@@ -39,7 +41,7 @@ class App:
         self.window.attributes("-topmost", True)
         self.window.mainloop()
 
-    def ini_gui(self):
+    def init_gui(self):
         self.canvas = tk.Canvas(self.window, width=self.camera.width, height=self.camera.height)
         self.canvas.pack()
 
@@ -52,7 +54,8 @@ class App:
         self.btn_class_two = tk.Button(self.window, text="Contracted", width=50, command=lambda: self.save_for_class(2))
         self.btn_class_two.pack(anchor=tk.CENTER, expand=True)
 
-        self.btn_train = tk.Button(self.window, text="Train model", width=50, command=lambda: self.model.train_model(self.counters))
+        self.btn_train = tk.Button(self.window, text="Train model", width=50,
+                                   command=lambda: self.model.train_model(self.counters))
         self.btn_train.pack(anchor=tk.CENTER, expand=True)
 
         self.btn_reset = tk.Button(self.window, text="Reset", width=50, command=self.reset)
@@ -75,7 +78,7 @@ class App:
         ret, frame = self.camera.get_frame()
         if ret:
             self.photo = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(frame))
-            self.canvas.create_image(0, 0, image=self.photo, anchor=tk.NW)
+            self.canvas.create_image(400, 400, image=self.photo, anchor=tk.NW)
 
         self.window.after(self.delay, self.update())
 
