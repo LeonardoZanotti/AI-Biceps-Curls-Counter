@@ -1,13 +1,20 @@
 import cv2 as cv
+import logging
 
+logger = logging.getLogger('ftpuploader')
+logging.basicConfig(level=logging.INFO, format='%(asctime)s :: %(levelname)s :: %(message)s')
 
 class Camera:
 
     def __init__(self):
-        self.camera = cv.VideoCapture(0)
-        self.camera.open('https://192.168.0.7:8080/video')       # IP Webcam app on PlayStore
-        if not self.camera.isOpened:
-            raise ValueError("Camera not found!")
+        try:
+            self.camera = cv.VideoCapture(0)
+            self.camera.open('https://192.168.0.7:8080/video')  # IP Webcam app on PlayStore
+            if not self.camera.isOpened:
+                raise ValueError("Camera not found!")
+        except Exception as e:
+            logger.error(f"An exception occurred: {e}")
+            exit(400)
 
         self.width = self.camera.get(cv.CAP_PROP_FRAME_WIDTH)
         self.height = self.camera.get(cv.CAP_PROP_FRAME_HEIGHT)
