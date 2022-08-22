@@ -17,7 +17,8 @@ class Camera:
             exit(400)
 
         self.width = self.camera.get(cv.CAP_PROP_FRAME_WIDTH)
-        self.height = self.camera.get(cv.CAP_PROP_FRAME_HEIGHT)
+        self.height = self.camera.get(cv.CAP_PROP_FRAME_HEIGHT) // 1.5
+        logger.info(f"Camera started with dimensions: {self.width, self.height}",)
 
     def __del__(self):
         if self.camera.isOpened:
